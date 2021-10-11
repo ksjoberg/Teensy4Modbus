@@ -1,0 +1,11 @@
+{
+    "name": "LwIP",
+    "version": "2.1.3-rc1",
+    "build": {
+        "includeDir": "src/include",
+        "flags": "-I../../include",
+        "srcFilter": [
+            "+<core/> +<netif/ethernet.c> -<core/ipv6>"
+        ]
+    }
+}
