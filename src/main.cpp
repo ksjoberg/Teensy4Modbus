@@ -20,6 +20,30 @@
 #include "lwip/sys.h"
 #include "lwip/timeouts.h"
 
+#include "serialmenu.h"
+
+#include "configuration.h"
+#include "modbus_tcp_rtu.h"
+
+ModbusTcpRtu rtugw1 = ModbusTcpRtu(&Serial2, 9);
+ModbusTcpRtu rtugw2 = ModbusTcpRtu(&Serial3, 18);
+ModbusTcpRtu rtugw3 = ModbusTcpRtu(&Serial4, 19);
+
+void serialEvent2()
+{
+  rtugw1.serialEvent();
+}
+
+void serialEvent3()
+{
+  rtugw2.serialEvent();
+}
+
+void serialEvent4()
+{
+  rtugw3.serialEvent();
+}
+
 #define ARRAY_SIZE(x)   (sizeof(x) / sizeof(*x))
 
 static struct netif netif_data;
@@ -150,12 +174,18 @@ void setup() {
   {
     CrashReport.printTo(Serial);
   }
+  configuration_load();
+  rtugw1.configure(active_config.modbus_gw[0].ipaddress, active_config.modbus_gw[0].tcp_port, active_config.modbus_gw[0].unit_filter);
+  
+
+  MenuSetup();
   init_lwip();
 
   while (!netif_is_up(&netif_data)) loop();
 
   while (dhserv_init(&dhcp_config) != ERR_OK) loop();
 
+  rtugw1.begin(active_config.modbus_gw[0].baudrate);
   //while (dnserv_init(&ipaddr, 53, dns_query_proc) != ERR_OK);
 }
 
@@ -184,8 +214,14 @@ void loop() {
     usb_ecm_read_done();
   }
   sys_check_timeouts();
+
+  rtugw1.doYield();
+  rtugw2.doYield();
+  rtugw3.doYield();
   yield();
+  MenuPoll();
 }
+
 
 int main(void)
 {
