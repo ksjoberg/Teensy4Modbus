@@ -72,7 +72,7 @@ static const dhcp_config_t dhcp_config =
 
 err_t output_fn(struct netif *netif, struct pbuf *p, const ip_addr_t *ipaddr)
 {
-    return etharp_output(netif, p, ipaddr);
+  return etharp_output(netif, p, ipaddr);
 }
 
 static void usb_ecm_transmit_packet(struct pbuf *p)
@@ -86,12 +86,12 @@ static void usb_ecm_transmit_packet(struct pbuf *p)
   for(q = p; q != NULL; q = q->next)
   {
 
-    char printbuf[3];
-    for(size_t i=0; i<q->len; i++)
-    {
-      sprintf((char*)&printbuf, "%02x", ((char *)q->payload)[i]);
-      printf((const char*)&printbuf);
-    }
+    //char printbuf[3];
+    //for(size_t i=0; i<q->len; i++)
+    //{
+    //  sprintf((char*)&printbuf, "%02x", ((char *)q->payload)[i]);
+    //  printf((const char*)&printbuf);
+    //}
 
     u16_t seglen = q->len;
     while(seglen)
@@ -113,7 +113,6 @@ static void usb_ecm_transmit_packet(struct pbuf *p)
   }
   size_t last_size = buf - (buf_end - buf_size);
   usb_ecm_write_done(last_size);
-  printf("\n");
 }
 
 err_t linkoutput_fn(struct netif *netif, struct pbuf *p)
@@ -167,9 +166,9 @@ void setup() {
   digitalWriteFast(13, LOW);
   delay(500);
 
+
   while (!usb_configuration) yield();
   delay(5000);
-  yield();
   if (CrashReport)
   {
     CrashReport.printTo(Serial);
@@ -196,14 +195,14 @@ void loop() {
   if (packet != NULL)
   {
     //printf("got packet with length %x\n", len);
-    char buf[3];
-    unsigned char *p = (unsigned char*)packet;
-    for(size_t i=0; i<len; i++)
-    {
-      sprintf((char*)&buf, "%02x", p[i]);
-      printf((const char*)&buf);
-    }
-    printf("\n");
+    //char buf[3];
+    //unsigned char *p = (unsigned char*)packet;
+    //for(size_t i=0; i<len; i++)
+    //{
+    //  sprintf((char*)&buf, "%02x", p[i]);
+    //  printf((const char*)&buf);
+    //}
+    //printf("\n");
 
     received_frame = pbuf_alloc(PBUF_RAW, len, PBUF_POOL);
     if (!received_frame) 
