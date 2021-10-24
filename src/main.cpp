@@ -26,8 +26,8 @@
 #include "modbus_tcp_rtu.h"
 
 ModbusTcpRtu rtugw1 = ModbusTcpRtu(&Serial2, 9);
-ModbusTcpRtu rtugw2 = ModbusTcpRtu(&Serial3, 18);
-ModbusTcpRtu rtugw3 = ModbusTcpRtu(&Serial4, 19);
+ModbusTcpRtu rtugw2 = ModbusTcpRtu(&Serial3, 19);
+ModbusTcpRtu rtugw3 = ModbusTcpRtu(&Serial4, 18);
 
 void serialEvent2()
 {
