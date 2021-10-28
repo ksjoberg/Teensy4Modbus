@@ -1,0 +1,594 @@
+EESchema Schematic File Version 4
+EELAYER 30 0
+EELAYER END
+$Descr A4 11693 8268
+encoding utf-8
+Sheet 1 1
+Title ""
+Date ""
+Rev ""
+Comp ""
+Comment1 ""
+Comment2 ""
+Comment3 ""
+Comment4 ""
+$EndDescr
+$Comp
+L Teensy:Teensy4.0 U1
+U 1 1 6172AFDB
+P 4750 3650
+F 0 "U1" H 4750 5265 50  0000 C CNN
+F 1 "Teensy4.0" H 4750 5174 50  0000 C CNN
+F 2 "Teensy:Teensy40" H 4350 3850 50  0001 C CNN
+F 3 "" H 4350 3850 50  0001 C CNN
+	1    4750 3650
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR0101
+U 1 1 6172D0C3
+P 2250 2400
+F 0 "#PWR0101" H 2250 2150 50  0001 C CNN
+F 1 "GND" H 2255 2227 50  0000 C CNN
+F 2 "" H 2250 2400 50  0001 C CNN
+F 3 "" H 2250 2400 50  0001 C CNN
+	1    2250 2400
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	3650 2300 2250 2300
+Wire Wire Line
+	2250 2300 2250 2400
+$Comp
+L SamacSys_Parts:ADM3493ARZ IC1
+U 1 1 6172FDBA
+P 7750 2350
+F 0 "IC1" H 8250 2615 50  0000 C CNN
+F 1 "ADM3493ARZ" H 8250 2524 50  0000 C CNN
+F 2 "SamacSys_Parts:SOIC127P600X175-8N" H 8600 2450 50  0001 L CNN
+F 3 "" H 8600 2350 50  0001 L CNN
+F 4 "Line Transceiver 1TR 1TX 1RX 8-Pin SOIC" H 8600 2250 50  0001 L CNN "Description"
+F 5 "1.75" H 8600 2150 50  0001 L CNN "Height"
+F 6 "584-ADM3493ARZ" H 8600 2050 50  0001 L CNN "Mouser Part Number"
+F 7 "https://www.mouser.co.uk/ProductDetail/Analog-Devices/ADM3493ARZ?qs=BpaRKvA4VqFweNjIMksMCw%3D%3D" H 8600 1950 50  0001 L CNN "Mouser Price/Stock"
+F 8 "Analog Devices" H 8600 1850 50  0001 L CNN "Manufacturer_Name"
+F 9 "ADM3493ARZ" H 8600 1750 50  0001 L CNN "Manufacturer_Part_Number"
+	1    7750 2350
+	1    0    0    -1  
+$EndComp
+$Comp
+L SamacSys_Parts:ADM3493ARZ IC2
+U 1 1 6173157E
+P 7750 3650
+F 0 "IC2" H 8250 3915 50  0000 C CNN
+F 1 "ADM3493ARZ" H 8250 3824 50  0000 C CNN
+F 2 "SamacSys_Parts:SOIC127P600X175-8N" H 8600 3750 50  0001 L CNN
+F 3 "" H 8600 3650 50  0001 L CNN
+F 4 "Line Transceiver 1TR 1TX 1RX 8-Pin SOIC" H 8600 3550 50  0001 L CNN "Description"
+F 5 "1.75" H 8600 3450 50  0001 L CNN "Height"
+F 6 "584-ADM3493ARZ" H 8600 3350 50  0001 L CNN "Mouser Part Number"
+F 7 "https://www.mouser.co.uk/ProductDetail/Analog-Devices/ADM3493ARZ?qs=BpaRKvA4VqFweNjIMksMCw%3D%3D" H 8600 3250 50  0001 L CNN "Mouser Price/Stock"
+F 8 "Analog Devices" H 8600 3150 50  0001 L CNN "Manufacturer_Name"
+F 9 "ADM3493ARZ" H 8600 3050 50  0001 L CNN "Manufacturer_Part_Number"
+	1    7750 3650
+	1    0    0    -1  
+$EndComp
+$Comp
+L SamacSys_Parts:ADM3493ARZ IC3
+U 1 1 61732A09
+P 7750 4850
+F 0 "IC3" H 8250 5115 50  0000 C CNN
+F 1 "ADM3493ARZ" H 8250 5024 50  0000 C CNN
+F 2 "SamacSys_Parts:SOIC127P600X175-8N" H 8600 4950 50  0001 L CNN
+F 3 "" H 8600 4850 50  0001 L CNN
+F 4 "Line Transceiver 1TR 1TX 1RX 8-Pin SOIC" H 8600 4750 50  0001 L CNN "Description"
+F 5 "1.75" H 8600 4650 50  0001 L CNN "Height"
+F 6 "584-ADM3493ARZ" H 8600 4550 50  0001 L CNN "Mouser Part Number"
+F 7 "https://www.mouser.co.uk/ProductDetail/Analog-Devices/ADM3493ARZ?qs=BpaRKvA4VqFweNjIMksMCw%3D%3D" H 8600 4450 50  0001 L CNN "Mouser Price/Stock"
+F 8 "Analog Devices" H 8600 4350 50  0001 L CNN "Manufacturer_Name"
+F 9 "ADM3493ARZ" H 8600 4250 50  0001 L CNN "Manufacturer_Part_Number"
+	1    7750 4850
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	7750 4950 7750 5050
+Wire Wire Line
+	7750 3750 7750 3850
+Wire Wire Line
+	7750 2450 7750 2550
+$Comp
+L power:GND #PWR0102
+U 1 1 61734197
+P 8850 2750
+F 0 "#PWR0102" H 8850 2500 50  0001 C CNN
+F 1 "GND" H 8855 2577 50  0000 C CNN
+F 2 "" H 8850 2750 50  0001 C CNN
+F 3 "" H 8850 2750 50  0001 C CNN
+	1    8850 2750
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR0103
+U 1 1 6173486A
+P 8850 4050
+F 0 "#PWR0103" H 8850 3800 50  0001 C CNN
+F 1 "GND" H 8855 3877 50  0000 C CNN
+F 2 "" H 8850 4050 50  0001 C CNN
+F 3 "" H 8850 4050 50  0001 C CNN
+	1    8850 4050
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR0104
+U 1 1 61734E73
+P 8850 5250
+F 0 "#PWR0104" H 8850 5000 50  0001 C CNN
+F 1 "GND" H 8855 5077 50  0000 C CNN
+F 2 "" H 8850 5250 50  0001 C CNN
+F 3 "" H 8850 5250 50  0001 C CNN
+	1    8850 5250
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	8750 2650 8850 2650
+Wire Wire Line
+	8850 2650 8850 2750
+Wire Wire Line
+	8750 3950 8850 3950
+Wire Wire Line
+	8850 3950 8850 4050
+Wire Wire Line
+	8750 5150 8850 5150
+Wire Wire Line
+	8850 5150 8850 5250
+$Comp
+L power:+3V3 #PWR0105
+U 1 1 61736A73
+P 8850 2250
+F 0 "#PWR0105" H 8850 2100 50  0001 C CNN
+F 1 "+3V3" H 8865 2423 50  0000 C CNN
+F 2 "" H 8850 2250 50  0001 C CNN
+F 3 "" H 8850 2250 50  0001 C CNN
+	1    8850 2250
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:+3V3 #PWR0106
+U 1 1 617378E8
+P 8850 3550
+F 0 "#PWR0106" H 8850 3400 50  0001 C CNN
+F 1 "+3V3" H 8865 3723 50  0000 C CNN
+F 2 "" H 8850 3550 50  0001 C CNN
+F 3 "" H 8850 3550 50  0001 C CNN
+	1    8850 3550
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:+3V3 #PWR0107
+U 1 1 61737FBA
+P 8850 4750
+F 0 "#PWR0107" H 8850 4600 50  0001 C CNN
+F 1 "+3V3" H 8865 4923 50  0000 C CNN
+F 2 "" H 8850 4750 50  0001 C CNN
+F 3 "" H 8850 4750 50  0001 C CNN
+	1    8850 4750
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	8750 4850 8850 4850
+Wire Wire Line
+	8850 4850 8850 4750
+Wire Wire Line
+	8750 3650 8850 3650
+Wire Wire Line
+	8850 3650 8850 3550
+Wire Wire Line
+	8750 2350 8850 2350
+Wire Wire Line
+	8850 2350 8850 2250
+$Comp
+L power:+3V3 #PWR0108
+U 1 1 61739334
+P 6100 4800
+F 0 "#PWR0108" H 6100 4650 50  0001 C CNN
+F 1 "+3V3" H 6115 4973 50  0000 C CNN
+F 2 "" H 6100 4800 50  0001 C CNN
+F 3 "" H 6100 4800 50  0001 C CNN
+	1    6100 4800
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR0109
+U 1 1 6173A0D2
+P 6250 4700
+F 0 "#PWR0109" H 6250 4450 50  0001 C CNN
+F 1 "GND" H 6255 4527 50  0000 C CNN
+F 2 "" H 6250 4700 50  0001 C CNN
+F 3 "" H 6250 4700 50  0001 C CNN
+	1    6250 4700
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	5850 4700 6250 4700
+Wire Wire Line
+	3650 3100 3150 3100
+Wire Wire Line
+	3650 3200 3150 3200
+Wire Wire Line
+	3650 3300 3150 3300
+Wire Wire Line
+	3650 4300 3150 4300
+Wire Wire Line
+	3650 4400 3150 4400
+Wire Wire Line
+	3650 4500 3150 4500
+Wire Wire Line
+	3650 4600 3150 4600
+Wire Wire Line
+	7750 2450 7250 2450
+Connection ~ 7750 2450
+Text GLabel 7250 2450 0    50   Input ~ 0
+TXEN2
+Text GLabel 3150 3300 0    50   Input ~ 0
+TXEN2
+Text GLabel 3150 4800 0    50   Input ~ 0
+TXEN3
+Text GLabel 3150 4700 0    50   Input ~ 0
+TXEN4
+Wire Wire Line
+	7750 3750 7250 3750
+Connection ~ 7750 3750
+Wire Wire Line
+	7750 4950 7250 4950
+Connection ~ 7750 4950
+Text GLabel 7250 3750 0    50   Input ~ 0
+TXEN3
+Text GLabel 7250 4950 0    50   Input ~ 0
+TXEN4
+Wire Wire Line
+	7750 2350 7250 2350
+Text GLabel 7250 2350 0    50   Input ~ 0
+RO2
+Text GLabel 3150 3100 0    50   Input ~ 0
+RO2
+Text GLabel 3150 3200 0    50   Input ~ 0
+DI2
+Text GLabel 3150 4400 0    50   Input ~ 0
+RO3
+Text GLabel 3150 4300 0    50   Input ~ 0
+DI3
+Text GLabel 3150 4500 0    50   Input ~ 0
+RO4
+Text GLabel 3150 4600 0    50   Input ~ 0
+DI4
+Wire Wire Line
+	7750 2650 7250 2650
+Wire Wire Line
+	7750 3950 7250 3950
+Wire Wire Line
+	7750 3650 7250 3650
+Wire Wire Line
+	7750 4850 7250 4850
+Wire Wire Line
+	7750 5150 7250 5150
+Text GLabel 7250 3650 0    50   Input ~ 0
+RO3
+Text GLabel 7250 3950 0    50   Input ~ 0
+DI3
+Text GLabel 7250 4850 0    50   Input ~ 0
+RO4
+Text GLabel 7250 5150 0    50   Input ~ 0
+DI4
+Text GLabel 7250 2650 0    50   Input ~ 0
+DI2
+$Comp
+L SamacSys_Parts:2350514-3 J1
+U 1 1 61732FA2
+P 9350 2650
+F 0 "J1" H 9642 2185 50  0000 C CNN
+F 1 "2350514-3" H 9642 2276 50  0000 C CNN
+F 2 "SamacSys_Parts:SHDRRA3W90P0X350_1X3_1110X920X691P" H 10000 2750 50  0001 L CNN
+F 3 "https://www.te.com/commerce/DocumentDelivery/DDEController?Action=showdoc&DocId=Customer+Drawing%7F2350514%7FA%7Fpdf%7FEnglish%7FENG_CD_2350514_A.pdf%7F2350514-3" H 10000 2650 50  0001 L CNN
+F 4 "2350514-3" H 10000 2550 50  0001 L CNN "Description"
+F 5 "6.91" H 10000 2450 50  0001 L CNN "Height"
+F 6 "TE Connectivity" H 10000 2350 50  0001 L CNN "Manufacturer_Name"
+F 7 "2350514-3" H 10000 2250 50  0001 L CNN "Manufacturer_Part_Number"
+F 8 "571-2350514-3" H 10000 2150 50  0001 L CNN "Mouser Part Number"
+F 9 "https://www.mouser.co.uk/ProductDetail/TE-Connectivity/2350514-3?qs=wnTfsH77Xs4%252BXocSlHm5VQ%3D%3D" H 10000 2050 50  0001 L CNN "Mouser Price/Stock"
+F 10 "" H 10000 1950 50  0001 L CNN "Arrow Part Number"
+F 11 "" H 10000 1850 50  0001 L CNN "Arrow Price/Stock"
+	1    9350 2650
+	1    0    0    1   
+$EndComp
+$Comp
+L SamacSys_Parts:2350514-3 J2
+U 1 1 61733C7F
+P 9350 3950
+F 0 "J2" H 9642 3485 50  0000 C CNN
+F 1 "2350514-3" H 9642 3576 50  0000 C CNN
+F 2 "SamacSys_Parts:SHDRRA3W90P0X350_1X3_1110X920X691P" H 10000 4050 50  0001 L CNN
+F 3 "https://www.te.com/commerce/DocumentDelivery/DDEController?Action=showdoc&DocId=Customer+Drawing%7F2350514%7FA%7Fpdf%7FEnglish%7FENG_CD_2350514_A.pdf%7F2350514-3" H 10000 3950 50  0001 L CNN
+F 4 "2350514-3" H 10000 3850 50  0001 L CNN "Description"
+F 5 "6.91" H 10000 3750 50  0001 L CNN "Height"
+F 6 "TE Connectivity" H 10000 3650 50  0001 L CNN "Manufacturer_Name"
+F 7 "2350514-3" H 10000 3550 50  0001 L CNN "Manufacturer_Part_Number"
+F 8 "571-2350514-3" H 10000 3450 50  0001 L CNN "Mouser Part Number"
+F 9 "https://www.mouser.co.uk/ProductDetail/TE-Connectivity/2350514-3?qs=wnTfsH77Xs4%252BXocSlHm5VQ%3D%3D" H 10000 3350 50  0001 L CNN "Mouser Price/Stock"
+F 10 "" H 10000 3250 50  0001 L CNN "Arrow Part Number"
+F 11 "" H 10000 3150 50  0001 L CNN "Arrow Price/Stock"
+	1    9350 3950
+	1    0    0    1   
+$EndComp
+$Comp
+L SamacSys_Parts:2350514-3 J3
+U 1 1 61735E36
+P 9350 5150
+F 0 "J3" H 9642 4685 50  0000 C CNN
+F 1 "2350514-3" H 9642 4776 50  0000 C CNN
+F 2 "SamacSys_Parts:SHDRRA3W90P0X350_1X3_1110X920X691P" H 10000 5250 50  0001 L CNN
+F 3 "https://www.te.com/commerce/DocumentDelivery/DDEController?Action=showdoc&DocId=Customer+Drawing%7F2350514%7FA%7Fpdf%7FEnglish%7FENG_CD_2350514_A.pdf%7F2350514-3" H 10000 5150 50  0001 L CNN
+F 4 "2350514-3" H 10000 5050 50  0001 L CNN "Description"
+F 5 "6.91" H 10000 4950 50  0001 L CNN "Height"
+F 6 "TE Connectivity" H 10000 4850 50  0001 L CNN "Manufacturer_Name"
+F 7 "2350514-3" H 10000 4750 50  0001 L CNN "Manufacturer_Part_Number"
+F 8 "571-2350514-3" H 10000 4650 50  0001 L CNN "Mouser Part Number"
+F 9 "https://www.mouser.co.uk/ProductDetail/TE-Connectivity/2350514-3?qs=wnTfsH77Xs4%252BXocSlHm5VQ%3D%3D" H 10000 4550 50  0001 L CNN "Mouser Price/Stock"
+F 10 "" H 10000 4450 50  0001 L CNN "Arrow Part Number"
+F 11 "" H 10000 4350 50  0001 L CNN "Arrow Price/Stock"
+	1    9350 5150
+	1    0    0    1   
+$EndComp
+Wire Wire Line
+	8750 2450 9100 2450
+Wire Wire Line
+	8750 2550 9250 2550
+Wire Wire Line
+	8850 2650 9350 2650
+Connection ~ 8850 2650
+Wire Wire Line
+	8750 3750 9100 3750
+Wire Wire Line
+	8750 3850 9250 3850
+Wire Wire Line
+	8850 3950 9350 3950
+Connection ~ 8850 3950
+Wire Wire Line
+	8750 4950 9100 4950
+Wire Wire Line
+	8750 5050 9250 5050
+Wire Wire Line
+	8850 5150 9350 5150
+Connection ~ 8850 5150
+Text Label 8950 2450 0    50   ~ 0
+B2
+Text Label 8950 2550 0    50   ~ 0
+A2
+Text Label 8950 3750 0    50   ~ 0
+B3
+Text Label 8950 3850 0    50   ~ 0
+A3
+Text Label 8950 4950 0    50   ~ 0
+B4
+Text Label 8950 5050 0    50   ~ 0
+A4
+$Comp
+L Device:R R1
+U 1 1 61747ACB
+P 9250 2400
+F 0 "R1" H 9320 2446 50  0000 L CNN
+F 1 "120" H 9320 2355 50  0000 L CNN
+F 2 "Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder" V 9180 2400 50  0001 C CNN
+F 3 "~" H 9250 2400 50  0001 C CNN
+	1    9250 2400
+	1    0    0    -1  
+$EndComp
+Connection ~ 9250 2550
+Wire Wire Line
+	9250 2550 9350 2550
+$Comp
+L Device:R R2
+U 1 1 61749097
+P 9250 3700
+F 0 "R2" H 9320 3746 50  0000 L CNN
+F 1 "120" H 9320 3655 50  0000 L CNN
+F 2 "Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder" V 9180 3700 50  0001 C CNN
+F 3 "~" H 9250 3700 50  0001 C CNN
+	1    9250 3700
+	1    0    0    -1  
+$EndComp
+Connection ~ 9250 3850
+Wire Wire Line
+	9250 3850 9350 3850
+$Comp
+L Device:R R3
+U 1 1 61749B66
+P 9250 4900
+F 0 "R3" H 9320 4946 50  0000 L CNN
+F 1 "120" H 9320 4855 50  0000 L CNN
+F 2 "Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder" V 9180 4900 50  0001 C CNN
+F 3 "~" H 9250 4900 50  0001 C CNN
+	1    9250 4900
+	1    0    0    -1  
+$EndComp
+Connection ~ 9250 5050
+Wire Wire Line
+	9250 5050 9350 5050
+$Comp
+L Connector:Conn_01x02_Male J4
+U 1 1 6174C567
+P 9450 1950
+F 0 "J4" H 9422 1924 50  0000 R CNN
+F 1 "Conn_01x02_Male" H 9422 1833 50  0000 R CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical" H 9450 1950 50  0001 C CNN
+F 3 "~" H 9450 1950 50  0001 C CNN
+	1    9450 1950
+	-1   0    0    -1  
+$EndComp
+$Comp
+L Connector:Conn_01x02_Male J5
+U 1 1 6174DA0B
+P 9450 3250
+F 0 "J5" H 9422 3224 50  0000 R CNN
+F 1 "Conn_01x02_Male" H 9422 3133 50  0000 R CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical" H 9450 3250 50  0001 C CNN
+F 3 "~" H 9450 3250 50  0001 C CNN
+	1    9450 3250
+	-1   0    0    -1  
+$EndComp
+$Comp
+L Connector:Conn_01x02_Male J6
+U 1 1 6174E2BC
+P 9450 4450
+F 0 "J6" H 9422 4424 50  0000 R CNN
+F 1 "Conn_01x02_Male" H 9422 4333 50  0000 R CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical" H 9450 4450 50  0001 C CNN
+F 3 "~" H 9450 4450 50  0001 C CNN
+	1    9450 4450
+	-1   0    0    -1  
+$EndComp
+Wire Wire Line
+	9250 4750 9250 4550
+Wire Wire Line
+	9250 4450 9100 4450
+Wire Wire Line
+	9100 4450 9100 4950
+Connection ~ 9100 4950
+Wire Wire Line
+	9100 4950 9350 4950
+Wire Wire Line
+	9250 3550 9250 3350
+Wire Wire Line
+	9250 3250 9100 3250
+Wire Wire Line
+	9100 3250 9100 3750
+Connection ~ 9100 3750
+Wire Wire Line
+	9100 3750 9350 3750
+Wire Wire Line
+	9250 2250 9250 2050
+Wire Wire Line
+	9250 1950 9100 1950
+Wire Wire Line
+	9100 1950 9100 2450
+Connection ~ 9100 2450
+Wire Wire Line
+	9100 2450 9350 2450
+Wire Wire Line
+	5850 4800 6100 4800
+Wire Wire Line
+	3650 4700 3150 4700
+Wire Wire Line
+	3650 4800 3150 4800
+$Comp
+L power:GND #PWR0110
+U 1 1 6179A488
+P 3400 3900
+F 0 "#PWR0110" H 3400 3650 50  0001 C CNN
+F 1 "GND" H 3405 3727 50  0000 C CNN
+F 2 "" H 3400 3900 50  0001 C CNN
+F 3 "" H 3400 3900 50  0001 C CNN
+	1    3400 3900
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	3650 3900 3400 3900
+$Comp
+L Device:C C1
+U 1 1 617A7D5B
+P 7650 5800
+F 0 "C1" H 7765 5846 50  0000 L CNN
+F 1 "0.1uF" H 7765 5755 50  0000 L CNN
+F 2 "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder" H 7688 5650 50  0001 C CNN
+F 3 "~" H 7650 5800 50  0001 C CNN
+	1    7650 5800
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR0111
+U 1 1 617A8936
+P 7650 5950
+F 0 "#PWR0111" H 7650 5700 50  0001 C CNN
+F 1 "GND" H 7655 5777 50  0000 C CNN
+F 2 "" H 7650 5950 50  0001 C CNN
+F 3 "" H 7650 5950 50  0001 C CNN
+	1    7650 5950
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:+3V3 #PWR0112
+U 1 1 617A8F26
+P 7650 5650
+F 0 "#PWR0112" H 7650 5500 50  0001 C CNN
+F 1 "+3V3" H 7665 5823 50  0000 C CNN
+F 2 "" H 7650 5650 50  0001 C CNN
+F 3 "" H 7650 5650 50  0001 C CNN
+	1    7650 5650
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:C C2
+U 1 1 617ACAEC
+P 8100 5800
+F 0 "C2" H 8215 5846 50  0000 L CNN
+F 1 "0.1uF" H 8215 5755 50  0000 L CNN
+F 2 "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder" H 8138 5650 50  0001 C CNN
+F 3 "~" H 8100 5800 50  0001 C CNN
+	1    8100 5800
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR0113
+U 1 1 617ACAF6
+P 8100 5950
+F 0 "#PWR0113" H 8100 5700 50  0001 C CNN
+F 1 "GND" H 8105 5777 50  0000 C CNN
+F 2 "" H 8100 5950 50  0001 C CNN
+F 3 "" H 8100 5950 50  0001 C CNN
+	1    8100 5950
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:+3V3 #PWR0114
+U 1 1 617ACB00
+P 8100 5650
+F 0 "#PWR0114" H 8100 5500 50  0001 C CNN
+F 1 "+3V3" H 8115 5823 50  0000 C CNN
+F 2 "" H 8100 5650 50  0001 C CNN
+F 3 "" H 8100 5650 50  0001 C CNN
+	1    8100 5650
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:C C3
+U 1 1 617B041A
+P 8550 5800
+F 0 "C3" H 8665 5846 50  0000 L CNN
+F 1 "0.1uF" H 8665 5755 50  0000 L CNN
+F 2 "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder" H 8588 5650 50  0001 C CNN
+F 3 "~" H 8550 5800 50  0001 C CNN
+	1    8550 5800
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR0115
+U 1 1 617B0424
+P 8550 5950
+F 0 "#PWR0115" H 8550 5700 50  0001 C CNN
+F 1 "GND" H 8555 5777 50  0000 C CNN
+F 2 "" H 8550 5950 50  0001 C CNN
+F 3 "" H 8550 5950 50  0001 C CNN
+	1    8550 5950
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:+3V3 #PWR0116
+U 1 1 617B042E
+P 8550 5650
+F 0 "#PWR0116" H 8550 5500 50  0001 C CNN
+F 1 "+3V3" H 8565 5823 50  0000 C CNN
+F 2 "" H 8550 5650 50  0001 C CNN
+F 3 "" H 8550 5650 50  0001 C CNN
+	1    8550 5650
+	1    0    0    -1  
+$EndComp
+$EndSCHEMATC
