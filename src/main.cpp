@@ -25,23 +25,25 @@
 #include "configuration.h"
 #include "modbus_tcp_rtu.h"
 
-ModbusTcpRtu rtugw1 = ModbusTcpRtu(&Serial2, 9);
-ModbusTcpRtu rtugw2 = ModbusTcpRtu(&Serial3, 19);
-ModbusTcpRtu rtugw3 = ModbusTcpRtu(&Serial4, 18);
+ModbusTcpRtu rtugws[MODBUS_GW_COUNT] = {
+  ModbusTcpRtu(&Serial2, 9, "X", &Serial),
+  ModbusTcpRtu(&Serial3, 19, "Y", &Serial),
+  ModbusTcpRtu(&Serial4, 18, "Z", &Serial)
+};
 
 void serialEvent2()
 {
-  rtugw1.serialEvent();
+  rtugws[0].serialEvent();
 }
 
 void serialEvent3()
 {
-  rtugw2.serialEvent();
+  rtugws[1].serialEvent();
 }
 
 void serialEvent4()
 {
-  rtugw3.serialEvent();
+  rtugws[2].serialEvent();
 }
 
 #define ARRAY_SIZE(x)   (sizeof(x) / sizeof(*x))
@@ -168,23 +170,32 @@ void setup() {
 
 
   while (!usb_configuration) yield();
-  delay(5000);
+  delay(2500);
   if (CrashReport)
   {
     CrashReport.printTo(Serial);
   }
   configuration_load();
-  rtugw1.configure(active_config.modbus_gw[0].ipaddress, active_config.modbus_gw[0].tcp_port, active_config.modbus_gw[0].unit_filter);
-  
+  for(uint8_t i=0; i<MODBUS_GW_COUNT; i++)
+  {
+    rtugws[i].configure(active_config.modbus_gw[i].ipaddress, active_config.modbus_gw[i].tcp_port, active_config.modbus_gw[i].unit_filter);
+    rtugws[i].setFlags(active_config.modbus_gw[i].flags);
+  }
 
   MenuSetup();
   init_lwip();
 
   while (!netif_is_up(&netif_data)) loop();
 
-  while (dhserv_init(&dhcp_config) != ERR_OK) loop();
+  if (active_config.dhcps_enabled)
+  {
+    while (dhserv_init(&dhcp_config) != ERR_OK) loop();
+  }
 
-  rtugw1.begin(active_config.modbus_gw[0].baudrate);
+  for(uint8_t i=0; i<MODBUS_GW_COUNT; i++)
+  {
+    rtugws[i].begin(active_config.modbus_gw[i].baudrate);
+  }
   //while (dnserv_init(&ipaddr, 53, dns_query_proc) != ERR_OK);
 }
 
@@ -214,11 +225,13 @@ void loop() {
   }
   sys_check_timeouts();
 
-  rtugw1.doYield();
-  rtugw2.doYield();
-  rtugw3.doYield();
   yield();
   MenuPoll();
+  for(uint8_t i=0; i<MODBUS_GW_COUNT; i++)
+  {
+    rtugws[i].doYield();
+    rtugws[i].setFlags(active_config.modbus_gw[i].flags);
+  }
 }
 
 

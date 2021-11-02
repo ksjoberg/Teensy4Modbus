@@ -1,5 +1,4 @@
 #include "modbus_tcp_rtu.h"
-#include "debug/printf.h"
 
 #define TCP_RECONNECTION_INTERVAL   5000
 
@@ -72,51 +71,76 @@ static void server_close(struct tcp_pcb *pcb)
     tcp_recv(pcb, NULL);
     tcp_close(pcb);
 
-    printf("\nserver_close(): Closing...\n");
+    //printf("\r\nserver_close(): Closing...\r\n");
 }
-static err_t server_recv(void *arg, struct tcp_pcb *pcb, struct pbuf *p, err_t err)
+err_t server_recv(void *arg, struct tcp_pcb *pcb, struct pbuf *p, err_t err)
 {
     //LWIP_UNUSED_ARG(arg);
     ModbusTcpRtu* m = (ModbusTcpRtu*)arg;
 
     if (err == ERR_OK && p != NULL)
     {
-        tcp_recved(pcb, p->tot_len);
-
-        printf("\nserver_recv(): pbuf->len is %d byte\n", p->len);
-        printf("server_recv(): pbuf->tot_len is %d byte\n", p->tot_len);
-        printf("server_recv(): pbuf->next is %d\n", p->next);
+        if (m->debug_stream && m->debug_flags & DEBUG_TCP)
+        {
+            m->debug_stream->printf("\r\nserver_recv(): pbuf->len is %d byte\r\n", p->len);
+            m->debug_stream->printf("server_recv(): pbuf->tot_len is %d byte\r\n", p->tot_len);
+            m->debug_stream->printf("server_recv(): pbuf->next is %d\r\n", p->next);
+        }
 
         if (p->len > 8)
         {
             if (m->outstanding_transaction)
             {
+                // Expecting response from TCP to be forwarded (with added checksum) to RTU
                 if (((uint16_t*)p->payload)[0] == BIGENDIAN16(m->current_transaction))
                 {
                     size_t len = BIGENDIAN16(((uint16_t*)p->payload)[2]);
                     uint16_t crc;
-                    printf("MATCH %d\n", len);
+                    if (m->debug_stream && m->debug_flags & DEBUG_TCP)
+                        m->debug_stream->printf("TCP-RES %d\r\n", len);
                     char *buf = (char*)p->payload;
                     buf += 6; // Skip over header
                     crc = gen_crc16((const uint8_t*)buf, len, 0xffff);
                     m->serialdev->write(buf, len);
                     m->serialdev->write((const char*)&crc, sizeof(crc));
                     m->outstanding_transaction = false;
+                    m->counters.rtu_tx_frames++;
+                    m->counters.rtu_tx_bytes += len + 2;
+
                 }
+            } else {
+                size_t len = BIGENDIAN16(((uint16_t*)p->payload)[2]);
+                uint16_t crc;
+                if (m->debug_stream && m->debug_flags & DEBUG_TCP)
+                    m->debug_stream->printf("TCP-REQ %d\r\n", len);
+                char *buf = (char*)p->payload;
+                buf += 6; // Skip over header
+                crc = gen_crc16((const uint8_t*)buf, len, 0xffff);
+                m->serialdev->write(buf, len);
+                m->serialdev->write((const char*)&crc, sizeof(crc));
+                m->counters.rtu_tx_frames++;
+                m->counters.rtu_tx_bytes += len + 2;
             }
         }
 
+        tcp_recved(pcb, p->tot_len);
+        m->counters.tcp_rx_frames++;
+        m->counters.tcp_rx_bytes += p->tot_len;
         pbuf_free(p);
         //server_close(pcb);
     }
     else
     {
-        printf("\nserver_recv(): Errors-> ");
-        if (err != ERR_OK)
-            printf("1) Connection is not on ERR_OK state, but in %d state->\n", err);
-        if (p == NULL)
-            printf("2) Pbuf pointer p is a NULL pointer->\n ");
-        printf("server_recv(): Closing server-side connection...");
+        if (m->debug_stream)
+        {
+            m->debug_stream->printf("%s server_recv(): Errors-> ", m->name);
+            if (err != ERR_OK)
+                m->debug_stream->printf("1) Connection is not on ERR_OK state, but in %d state->\r\n", err);
+            if (p == NULL)
+                m->debug_stream->printf("2) Pbuf pointer p is a NULL pointer->\r\n ");
+            m->debug_stream->printf("%s server_recv(): Closing server-side connection...", m->name);
+        }
+
 
         pbuf_free(p);
         server_close(pcb);
@@ -128,39 +152,34 @@ static err_t server_recv(void *arg, struct tcp_pcb *pcb, struct pbuf *p, err_t e
     return ERR_OK;
 }
 
-static err_t server_sent(void *arg, struct tcp_pcb *pcb, u16_t len)
-{
-    LWIP_UNUSED_ARG(len);
-    LWIP_UNUSED_ARG(arg);
-
-    printf("\nserver_sent(): Correctly ACKed\n");
-    //server_close(pcb);
-
-    return ERR_OK;
-}
-
 static err_t server_poll(void *arg, struct tcp_pcb *pcb)
 {
     static int counter = 1;
-    LWIP_UNUSED_ARG(arg);
+    ModbusTcpRtu* m = (ModbusTcpRtu*)arg;
     LWIP_UNUSED_ARG(pcb);
 
-    printf("\nserver_poll(): Call number %d\n", counter++);
+    if (m->debug_stream && m->debug_flags & DEBUG_TCP)
+    {
+        m->debug_stream->printf("%s server_poll(): Call number %d\r\n", m->name, counter++);
+    }
+    
     return ERR_OK;
 }
 
 static void server_err(void *arg, err_t err)
 {
-    LWIP_UNUSED_ARG(arg);
+    ModbusTcpRtu* m = (ModbusTcpRtu*)arg;
     LWIP_UNUSED_ARG(err);
 
-    printf("\nserver_err(): Fatal error, exiting...\n");
+    if (m->debug_stream)
+    {
+        m->debug_stream->printf("%s server_err(): Fatal error %d, exiting...\r\n", m->name, err);
+    }
 }
 
 
 static err_t server_accept(void *arg, struct tcp_pcb *newpcb, err_t err)
 {
-    LWIP_UNUSED_ARG(arg);
     LWIP_UNUSED_ARG(err);
 
     ModbusTcpRtu* m = (ModbusTcpRtu*)arg;
@@ -173,14 +192,16 @@ static err_t server_accept(void *arg, struct tcp_pcb *newpcb, err_t err)
     tcp_setprio(newpcb, TCP_PRIO_MIN);
 
     tcp_recv(newpcb, server_recv);
-    //tcp_sent(pcb, server_sent);
 
     tcp_err(newpcb, server_err);
 
     tcp_poll(newpcb, server_poll, 4); //every two seconds of inactivity of the TCP connection
 
     tcp_accepted(newpcb);
-    printf("\nserver_accept(): Accepting incoming connection on server %x...\n", arg);
+    if (m->debug_stream)
+    {
+        m->debug_stream->printf("%s server_accept(): Accepting incoming connection...\r\n", m->name);
+    }
     return ERR_OK;
 }
 
@@ -189,7 +210,6 @@ err_t client_connected(void *arg, struct tcp_pcb *newpcb, err_t err)
     tcp_setprio(newpcb, TCP_PRIO_MIN);
 
     tcp_recv(newpcb, server_recv);
-    //tcp_sent(pcb, server_sent);
 
     tcp_err(newpcb, server_err);
 
@@ -198,17 +218,28 @@ err_t client_connected(void *arg, struct tcp_pcb *newpcb, err_t err)
     ModbusTcpRtu* m = (ModbusTcpRtu*)arg;
     m->active_pcb = newpcb;
 
-    printf("\nclient_connected(): Connection established!\n");
+    if (m->debug_stream)
+    {
+        m->debug_stream->printf("%s client_connected(): Connection established!\r\n", m->name);
+    }
     return ERR_OK;
 }
 
 void client_error(void * arg, err_t err)
 {
-    printf("\nclient_error()!\n");
-
     ModbusTcpRtu* m = (ModbusTcpRtu*)arg;
+    if (m->debug_stream)
+    {
+        m->debug_stream->printf("%s client_error() %d!\r\n", m->name, err);
+    }
+
     m->clientConnectionFailed();
     m->active_pcb = nullptr;
+}
+
+void ModbusTcpRtu::setFlags(uint8_t flags)
+{
+    debug_flags = flags;
 }
 
 void ModbusTcpRtu::configure(uint32_t ipaddress, uint16_t tcp_port, const uint8_t* rtu_slave_ids)
@@ -220,7 +251,7 @@ void ModbusTcpRtu::configure(uint32_t ipaddress, uint16_t tcp_port, const uint8_
 
 void ModbusTcpRtu::clientConnectionFailed()
 {
-    if (ip_address_.addr != IPADDR_ANY)
+    if (ip_address_.addr != IPADDR_ANY && connection_failed_at == 0)
     {
         connection_failed_at = millis();
         active_pcb = nullptr;
@@ -243,7 +274,6 @@ void ModbusTcpRtu::begin(uint32_t baud, uint16_t format)
     serialdev->begin(baud, format);
     // crude calculation of how long 3.5 char times is in micros
     frame_spacing = (1000000 / (baud / 10)) * 35 / 10;
-    printf("serial begin\n");
     rtu_rx_current = rtu_rx_buffer1;
     rtu_rx_pos = 0;
 
@@ -254,7 +284,7 @@ void ModbusTcpRtu::begin(uint32_t baud, uint16_t format)
         tcp_arg(main_pcb, this);
         main_pcb = tcp_listen(main_pcb);
         tcp_accept(main_pcb, server_accept);
-    } else {
+    } else if (tcp_port_ != 0) {
         // TCP Client mode
         clientConnect();
     }
@@ -286,21 +316,28 @@ inline void ModbusTcpRtu::processRtuFrame()
 
     char buf[3];
     unsigned char *p = (unsigned char *)rtu_rx_frame;
-    for (size_t i = 0; i < rtu_rx_frame_len; i++)
-    {
-        sprintf((char *)&buf, "%02x", p[i]);
-        printf((const char *)&buf);
+    if (debug_stream && debug_flags & DEBUG_RTU) {
+        debug_stream->printf("%s RTU: ", name);
+        for (size_t i = 0; i < rtu_rx_frame_len; i++)
+        {
+            sprintf((char *)&buf, "%02x", p[i]);
+            debug_stream->printf((const char *)&buf);
+        }
+        debug_stream->printf("\r\n");
     }
-    printf("\n");
+
     if (rtu_rx_frame_len<4)
     {
+        counters.rtu_rx_frames_dropped_badlen++;
         goto done;
     }
-    //printf("CRC: %x\n", gen_crc16(rtu_rx_frame, rtu_rx_frame_len-2, 0xffff));
+    //printf("CRC: %x\r\n", gen_crc16(rtu_rx_frame, rtu_rx_frame_len-2, 0xffff));
     expectedcrc = *(uint16_t*)(rtu_rx_frame+rtu_rx_frame_len - 2);
     if (expectedcrc ^ gen_crc16(rtu_rx_frame, rtu_rx_frame_len-2, 0xffff))
     {
-        printf("CRC mismatch, dropping, should be %x\n", gen_crc16(rtu_rx_frame, rtu_rx_frame_len-2, 0xffff));
+        if (debug_stream && debug_flags & DEBUG_RTU)
+            debug_stream->printf("%s CRC mismatch, dropping, should be %x\r\n", name, gen_crc16(rtu_rx_frame, rtu_rx_frame_len-2, 0xffff));
+        counters.rtu_rx_frames_dropped_badcrc++;
         goto done;
     }
 
@@ -319,14 +356,20 @@ inline void ModbusTcpRtu::processRtuFrame()
         }
         if (!found)
         {
-            printf("Ignoring, wrong address\n");
+            if (debug_stream && debug_flags & DEBUG_RTU)
+                debug_stream->printf("%s Ignoring, wrong address\r\n", name);
+            counters.rtu_rx_frames_dropped_notforme++;
             goto done;
         }
 
-        printf("NEW RTU FRAME\n");
+
+
         // Slave mode: assume Modbus RTU request, forward over TCP
         if (active_pcb)
         {
+            counters.rtu_rx_bytes += rtu_rx_frame_len;
+            counters.rtu_rx_frames++;
+
             // Expect it to be a response?
             current_transaction++;
             modbus_tcp_header_t hdr = {
@@ -337,22 +380,33 @@ inline void ModbusTcpRtu::processRtuFrame()
             err_t lwip_err;
             if ((lwip_err = tcp_write(active_pcb, &hdr, sizeof(hdr), TCP_WRITE_FLAG_COPY)) != ERR_OK)
             {
-                printf("E1 %x\n", lwip_err);
+                if (debug_stream)
+                    debug_stream->printf("%s E1 %x\r\n", name, lwip_err);
+                clientConnectionFailed();
+
                 goto done;
             }
 
             if ((lwip_err = tcp_write(active_pcb, rtu_rx_frame, rtu_rx_frame_len-2 /*skip crc*/, TCP_WRITE_FLAG_COPY)) != ERR_OK)
             {
-                printf("E2 %x\n", lwip_err);
+                if (debug_stream)
+                    debug_stream->printf("%s E2 %x\r\n", name, lwip_err);
                 goto done;
             }
             outstanding_transaction = true;
             if ((lwip_err = tcp_output(active_pcb)) != ERR_OK)
             {
-                printf("E3 %x\n", lwip_err);
+                if (debug_stream)
+                    debug_stream->printf("%s E3 %x\r\n", name, lwip_err);
+                goto done;
             }
+            counters.tcp_tx_frames++;
+            counters.tcp_tx_bytes += sizeof(hdr) + rtu_rx_frame_len-2;
+
         } else {
-            printf("NO PCB\n");
+            counters.rtu_rx_frames_dropped_notcp++;
+            if (debug_stream)
+                debug_stream->printf("%s No TCP connection, drop\r\n", name);
         }
     }
 done:
@@ -391,7 +445,7 @@ void ModbusTcpRtu::checkFrameReady(bool serialEvent)
     }
     if (serialEvent)
     {
-        //printf("serialEvent %d\n", now - last_serial_event);
+        //printf("serialEvent %d\r\n", now - last_serial_event);
         last_serial_event = now;
     }
 }

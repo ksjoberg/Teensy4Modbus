@@ -3,10 +3,11 @@
 #include "lwip/ip_addr.h"
 
 #include <SerialCommands.h>
+#include "modbus_tcp_rtu.h"
 
 char serial_command_buffer_[80];
 SerialCommands serial_commands_(&Serial, serial_command_buffer_, sizeof(serial_command_buffer_), " ");
-
+extern ModbusTcpRtu rtugws[MODBUS_GW_COUNT];
 
 void cmd_show(SerialCommands* sender)
 {
@@ -29,6 +30,7 @@ void cmd_show(SerialCommands* sender)
     sender->GetSerial()->println("# TCP <-> RTU interfaces:");
     for(int i=0; i<MODBUS_GW_COUNT; i++)
     {
+        sender->GetSerial()->printf("  # Interface %d '%s'\r\n", i, rtugws[i].name);
         if (active_config.modbus_gw[i].ipaddress != 0)
         {
             sender->GetSerial()->printf("  # Mode TCP client (RTU slave), use \"set if %d ip.address 0.0.0.0\" to switch mode\r\n", i);
@@ -57,6 +59,7 @@ void cmd_show(SerialCommands* sender)
                 sender->GetSerial()->println();
             }
         }
+        sender->GetSerial()->printf("  if %d flags %d\r\n", i, active_config.modbus_gw[i].flags);
         sender->GetSerial()->println();
     }
     sender->GetSerial()->println();
@@ -102,7 +105,9 @@ void cmd_set_if(SerialCommands* sender, uint8_t index)
             value = sender->Next();
         } while (p < (pend-1) && *p++ != 0 && value != nullptr);
         *p = 0;
-    } else {
+    } else if (strcmp(key, "flags") == 0) {
+        active_config.modbus_gw[index].flags = atoi(value);
+    }else {
         sender->GetSerial()->printf("Unknown interface setting '%s'\r\n", key);
     }
 }
@@ -145,6 +150,54 @@ void cmd_save(SerialCommands* sender)
     sender->GetSerial()->println("Configuration has been saved. Reset the device to activate.");
 }
 
+void cmd_status(SerialCommands* sender)
+{
+    sender->GetSerial()->println("CURRENT STATUS");
+    sender->GetSerial()->println("==============");
+    for(uint8_t i=0; i<MODBUS_GW_COUNT; i++)
+    {
+        sender->GetSerial()->print("Interface ");
+        sender->GetSerial()->print(i);
+        sender->GetSerial()->print(" '");
+        sender->GetSerial()->print(rtugws[i].name);
+        sender->GetSerial()->println("'");
+
+        sender->GetSerial()->print("RTU RX/TX (frames): ");
+        sender->GetSerial()->print(rtugws[i].counters.rtu_rx_frames);
+        sender->GetSerial()->print("/");
+        sender->GetSerial()->print(rtugws[i].counters.rtu_tx_frames);
+        sender->GetSerial()->println();
+        sender->GetSerial()->print("RTU RX/TX (bytes): ");
+        sender->GetSerial()->print(rtugws[i].counters.rtu_rx_bytes);
+        sender->GetSerial()->print("/");
+        sender->GetSerial()->print(rtugws[i].counters.rtu_tx_bytes);
+        sender->GetSerial()->println();
+
+        sender->GetSerial()->print("RTU RX (frames dropped): ");
+        sender->GetSerial()->print(rtugws[i].counters.rtu_rx_frames_dropped_notforme);
+        sender->GetSerial()->print("/");
+        sender->GetSerial()->print(rtugws[i].counters.rtu_rx_frames_dropped_badcrc);
+        sender->GetSerial()->print("/");
+        sender->GetSerial()->print(rtugws[i].counters.rtu_rx_frames_dropped_badlen);
+        sender->GetSerial()->print("/");
+        sender->GetSerial()->print(rtugws[i].counters.rtu_rx_frames_dropped_notcp);
+        sender->GetSerial()->println("  (notforme/badcrc/badlen/notcp)");
+
+        sender->GetSerial()->print("TCP RX/TX (frames): ");
+        sender->GetSerial()->print(rtugws[i].counters.tcp_rx_frames);
+        sender->GetSerial()->print("/");
+        sender->GetSerial()->print(rtugws[i].counters.tcp_tx_frames);
+        sender->GetSerial()->println();
+        sender->GetSerial()->print("TCP RX/TX (bytes): ");
+        sender->GetSerial()->print(rtugws[i].counters.tcp_rx_bytes);
+        sender->GetSerial()->print("/");
+        sender->GetSerial()->print(rtugws[i].counters.tcp_tx_bytes);
+        sender->GetSerial()->println();
+        sender->GetSerial()->println();
+    }
+    sender->GetSerial()->println();
+}
+
 void cmd_reset(SerialCommands* sender)
 {
     configuration_reset();
@@ -152,7 +205,13 @@ void cmd_reset(SerialCommands* sender)
     sender->GetSerial()->println("Configuration has been reset. Reset the device to activate.");
 }
 
+void cmd_soft_reboot(SerialCommands* sender) {
+    _reboot_Teensyduino_();
+}
+
 SerialCommand cmd_reset_("reset", cmd_reset);
+SerialCommand cmd_reboot_("reboot", cmd_soft_reboot);
+SerialCommand cmd_status_("status", cmd_status);
 SerialCommand cmd_set_("set", cmd_set);
 SerialCommand cmd_save_("save", cmd_save);
 SerialCommand cmd_show_("show", cmd_show);
@@ -166,6 +225,8 @@ void cmd_unrecognized(SerialCommands* sender, const char* cmd)
   sender->GetSerial()->println("]");
   sender->GetSerial()->println("Available commands:");
   sender->GetSerial()->println(" * 'reset' - Factory resets the configuration");
+  sender->GetSerial()->println(" * 'reboot' - Performs a soft reboot");
+  sender->GetSerial()->println(" * 'status' - Shows the current status of each interface");
   sender->GetSerial()->println(" * 'show' - Shows the (currently unsaved?) configuration");
   sender->GetSerial()->println(" * 'save' - Saves the configuration shown by 'show'");
   sender->GetSerial()->println(" * 'set key value' - Sets the configuration item key to value");
@@ -176,11 +237,13 @@ void cmd_unrecognized(SerialCommands* sender, const char* cmd)
 void MenuSetup() {
   serial_commands_.SetDefaultHandler(cmd_unrecognized);
   serial_commands_.AddCommand(&cmd_reset_);
+  serial_commands_.AddCommand(&cmd_reboot_);
+  serial_commands_.AddCommand(&cmd_status_);
   serial_commands_.AddCommand(&cmd_set_);
   serial_commands_.AddCommand(&cmd_save_);
   serial_commands_.AddCommand(&cmd_show_);
 }
 
 void MenuPoll() {
-  SERIAL_COMMANDS_ERRORS t = serial_commands_.ReadSerial();
+  (void)serial_commands_.ReadSerial();
 }

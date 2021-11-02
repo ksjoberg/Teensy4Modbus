@@ -10,7 +10,8 @@ typedef struct cfg_modbus_gw {
     uint32_t ipaddress; // if set, behave as a TCP client and connect to here (implies RTU slave)...
     uint16_t tcp_port; // ...on this port. Otherwise, listen on this port and act as master on the RTU side.
     uint32_t baudrate;
-    uint8_t  unit_filter[32];
+    uint8_t  unit_filter[31];
+    uint8_t  flags;
 } cfg_modbus_gw_t;
 
 typedef struct configuration {
