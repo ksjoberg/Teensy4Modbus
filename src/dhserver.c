@@ -233,6 +233,8 @@ static void udp_recv_proc(void *arg, struct udp_pcb *upcb, struct pbuf *p, const
 	dhcp_entry_t *entry;
 	struct pbuf *pp;
 	struct netif *netif = netif_get_by_index(p->if_idx);
+	const ip_addr_t *dst = IP_ADDR_BROADCAST;
+	int psize = 0;
 
 	(void)arg;
 	(void)addr;
@@ -272,11 +274,19 @@ static void udp_recv_proc(void *arg, struct udp_pcb *upcb, struct pbuf *p, const
 			break;
 
 		case DHCP_REQUEST:
-			/* 1. find requested ipaddr in option list */
-			ptr = find_dhcp_option(dhcp_data.dp_options, sizeof(dhcp_data.dp_options), DHCP_IPADDRESS);
-			if (ptr == NULL) break;
-			if (ptr[1] != 4) break;
-			ptr += 2;
+			if (memcmp("\0\0\0", dhcp_data.dp_ciaddr, 4) == 0)
+			{
+				/* SELECTING STATE */
+				/* 1. find requested ipaddr in option list */
+				ptr = find_dhcp_option(dhcp_data.dp_options, sizeof(dhcp_data.dp_options), DHCP_IPADDRESS);
+				if (ptr == NULL) break;
+				if (ptr[1] != 4) break;
+				ptr += 2;
+			} else {
+				// There's a Client IP address, renew case:
+				ptr = dhcp_data.dp_ciaddr;
+				dst = addr;
+			}
 
 			/* 2. does hw-address registered? */
 			entry = entry_by_mac(dhcp_data.dp_chaddr);
@@ -297,7 +307,8 @@ static void udp_recv_proc(void *arg, struct udp_pcb *upcb, struct pbuf *p, const
 			/* 5. fill options */
 			memset(dhcp_data.dp_options, 0, sizeof(dhcp_data.dp_options));
 
-			fill_options(dhcp_data.dp_options,
+			psize = dhcp_data.dp_options - (uint8_t*)&dhcp_data;
+			psize += fill_options(dhcp_data.dp_options,
 				DHCP_ACK,
 				config->domain,
 				config->dns,
@@ -307,11 +318,11 @@ static void udp_recv_proc(void *arg, struct udp_pcb *upcb, struct pbuf *p, const
 				*netif_ip4_netmask(netif));
 
 			/* 6. send ACK */
-			pp = pbuf_alloc(PBUF_TRANSPORT, sizeof(dhcp_data), PBUF_POOL);
+			pp = pbuf_alloc(PBUF_TRANSPORT, psize, PBUF_POOL);
 			if (pp == NULL) break;
 			memcpy(entry->mac, dhcp_data.dp_chaddr, 6);
-			memcpy(pp->payload, &dhcp_data, sizeof(dhcp_data));
-			udp_sendto(upcb, pp, IP_ADDR_BROADCAST, port);
+			memcpy(pp->payload, &dhcp_data, psize);
+			udp_sendto(upcb, pp, dst, port);
 			pbuf_free(pp);
 			break;
 
